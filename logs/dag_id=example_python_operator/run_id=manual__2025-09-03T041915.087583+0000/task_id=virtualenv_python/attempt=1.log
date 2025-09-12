@@ -1,0 +1,34 @@
+{"timestamp":"2025-09-03T04:24:22.062060","level":"info","event":"DAG bundles loaded: dags-folder, example_dags","logger":"airflow.dag_processing.bundles.manager.DagBundlesManager"}
+{"timestamp":"2025-09-03T04:24:22.066330","level":"info","event":"Filling up the DagBag from /home/airflow/.local/lib/python3.12/site-packages/airflow/example_dags/standard/example_python_operator.py","logger":"airflow.models.dagbag.DagBag"}
+{"timestamp":"2025-09-03T04:24:22.711136Z","level":"info","event":"Task instance is in running state","chan":"stdout","logger":"task"}
+{"timestamp":"2025-09-03T04:24:22.712247Z","level":"info","event":" Previous state of the Task instance: TaskInstanceState.QUEUED","chan":"stdout","logger":"task"}
+{"timestamp":"2025-09-03T04:24:22.720542Z","level":"info","event":"Current task name:virtualenv_python","chan":"stdout","logger":"task"}
+{"timestamp":"2025-09-03T04:24:22.721750Z","level":"info","event":"Dag name:example_python_operator","chan":"stdout","logger":"task"}
+{"timestamp":"2025-09-03T04:24:22.846257","level":"info","event":"Executing cmd: uv venv --allow-existing --seed --python python /tmp/venvnu6ai60l","logger":"airflow.utils.process_utils"}
+{"timestamp":"2025-09-03T04:24:22.880660","level":"info","event":"Output:","logger":"airflow.utils.process_utils"}
+{"timestamp":"2025-09-03T04:24:24.924766","level":"info","event":"Using CPython 3.12.11 interpreter at: /usr/local/bin/python","logger":"airflow.utils.process_utils"}
+{"timestamp":"2025-09-03T04:24:24.943485","level":"info","event":"Creating virtual environment with seed packages at: /tmp/venvnu6ai60l","logger":"airflow.utils.process_utils"}
+{"timestamp":"2025-09-03T04:24:29.866796","level":"info","event":" + pip==25.2","logger":"airflow.utils.process_utils"}
+{"timestamp":"2025-09-03T04:24:29.912015","level":"info","event":"Executing cmd: uv pip install --python /tmp/venvnu6ai60l/bin/python -r /tmp/venvnu6ai60l/requirements.txt","logger":"airflow.utils.process_utils"}
+{"timestamp":"2025-09-03T04:24:29.913132","level":"info","event":"Output:","logger":"airflow.utils.process_utils"}
+{"timestamp":"2025-09-03T04:24:31.112220","level":"info","event":"Using Python 3.12.11 environment at: /tmp/venvnu6ai60l","logger":"airflow.utils.process_utils"}
+{"timestamp":"2025-09-03T04:24:31.446787","level":"info","event":"Resolved 1 package in 304ms","logger":"airflow.utils.process_utils"}
+{"timestamp":"2025-09-03T04:24:31.751287","level":"info","event":"Prepared 1 package in 291ms","logger":"airflow.utils.process_utils"}
+{"timestamp":"2025-09-03T04:24:31.774903","level":"info","event":"Installed 1 package in 20ms","logger":"airflow.utils.process_utils"}
+{"timestamp":"2025-09-03T04:24:31.775188","level":"info","event":" + colorama==0.4.0","logger":"airflow.utils.process_utils"}
+{"timestamp":"2025-09-03T04:24:32.012263","level":"info","event":"Executing cmd: /tmp/venvnu6ai60l/bin/python /tmp/venv-calliyze21mi/script.py /tmp/venv-calliyze21mi/script.in /tmp/venv-calliyze21mi/script.out /tmp/venv-calliyze21mi/string_args.txt /tmp/venv-calliyze21mi/termination.log /tmp/venv-calliyze21mi/airflow_context.json","logger":"airflow.utils.process_utils"}
+{"timestamp":"2025-09-03T04:24:32.014378","level":"info","event":"Output:","logger":"airflow.utils.process_utils"}
+{"timestamp":"2025-09-03T04:24:32.805987","level":"info","event":"\u001b[31msome red text","logger":"airflow.utils.process_utils"}
+{"timestamp":"2025-09-03T04:24:32.806290","level":"info","event":"\u001b[42mand with a green background","logger":"airflow.utils.process_utils"}
+{"timestamp":"2025-09-03T04:24:32.806481","level":"info","event":"\u001b[2mand in dim text","logger":"airflow.utils.process_utils"}
+{"timestamp":"2025-09-03T04:24:32.806593","level":"info","event":"\u001b[0m","logger":"airflow.utils.process_utils"}
+{"timestamp":"2025-09-03T04:24:32.806709","level":"info","event":"\u001b[2mPlease wait...","logger":"airflow.utils.process_utils"}
+{"timestamp":"2025-09-03T04:24:33.817190","level":"info","event":"\u001b[2mPlease wait...","logger":"airflow.utils.process_utils"}
+{"timestamp":"2025-09-03T04:24:34.823658","level":"info","event":"\u001b[2mPlease wait...","logger":"airflow.utils.process_utils"}
+{"timestamp":"2025-09-03T04:24:35.829289","level":"info","event":"\u001b[2mPlease wait...","logger":"airflow.utils.process_utils"}
+{"timestamp":"2025-09-03T04:24:36.848357","level":"info","event":"Finished","logger":"airflow.utils.process_utils"}
+{"timestamp":"2025-09-03T04:24:36.977443","level":"warning","event":"Fail to delete /opt/airflow/tmp/venvnu6ai60l. The directory does not exist.","logger":"airflow.task.operators.airflow.providers.standard.operators.python.PythonVirtualenvOperator"}
+{"timestamp":"2025-09-03T04:24:37.072371","level":"info","event":"Done. Returned value was: None","logger":"airflow.task.operators.airflow.providers.standard.operators.python.PythonVirtualenvOperator"}
+{"timestamp":"2025-09-03T04:24:37.305589Z","level":"info","event":"Task instance in success state","chan":"stdout","logger":"task"}
+{"timestamp":"2025-09-03T04:24:37.306859Z","level":"info","event":" Previous state of the Task instance: TaskInstanceState.RUNNING","chan":"stdout","logger":"task"}
+{"timestamp":"2025-09-03T04:24:37.312420Z","level":"info","event":"Task operator:<Task(PythonVirtualenvOperator): virtualenv_python>","chan":"stdout","logger":"task"}
