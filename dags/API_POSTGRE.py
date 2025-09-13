@@ -55,23 +55,33 @@ create_sor_schema = SQLExecuteQueryOperator(
             """,
     )
 
-create_stg_uber_data = SQLExecuteQueryOperator(
-        task_id="create_stg_table_uber_data",
-        conn_id="postgressql_conn",
-        sql="""
-            CREATE TABLE IF NOT EXISTS STG.uber_data (
-                Request_id VARCHAR(50),
-                Pickup_point VARCHAR(10),
-                Driver_id VARCHAR(50),
-                Status VARCHAR(10),
-                Request_time TIMESTAMP,
-                Drop_time TIMESTAMP,
-                Fare FLOAT,
-                Distance FLOAT,
-                Rider_id VARCHAR(50)
-            );
-            """,
-    )
+def create_stg_table_from_csv(ti, **kwargs):
+    import pandas as pd
+    file_path = ti.xcom_pull(task_ids="get_data")
+    if not file_path or not file_path.strip():
+        raise ValueError("No file path provided!")
+
+    df = pd.read_csv(file_path)
+    columns = df.columns.tolist()
+    
+    columns_sql = ",\n    ".join([f'"{col}" TEXT' for col in columns])
+    create_table_sql = f"""
+    CREATE TABLE IF NOT EXISTS STG.uber_data (
+        {columns_sql}
+    );
+    """
+
+    hook = PostgresHook(postgres_conn_id="postgressql_conn")
+    hook.run(create_table_sql)
+    print("STG.uber_data table created with columns:", columns)
+
+create_stg_uber_data_dynamic = PythonOperator(
+    task_id="create_stg_table_uber_data_dynamic",
+    python_callable=create_stg_table_from_csv,
+    dag=DAG,
+    provide_context=True,
+)
+
 create_sor_uber_data = SQLExecuteQueryOperator(
         task_id="create_sor_table_uber_data",
         conn_id="postgressql_conn",
@@ -89,3 +99,22 @@ create_sor_uber_data = SQLExecuteQueryOperator(
             );
             """,
 )
+
+get_data = PythonOperator(
+    task_id="get_data",
+    python_callable=get_data,
+    dag=DAG,
+    provide_context=True,
+)
+
+check_data = PythonOperator(
+    task_id="check_data",
+    python_callable=check_data,
+    dag=DAG,
+    provide_context=True,
+)
+
+get_data >> check_data >> create_stg_schema >> create_sor_schema >> create_stg_uber_data >> create_sor_uber_data
+
+
+
