@@ -1,6 +1,8 @@
 import datetime
-from airflow.sdk import DAG
+from airflow.sdk import DAG,task
 from airflow.providers.standard.operators.python import PythonOperator
+rom airflow.providers.postgres.hooks.postgres import PostgresHook
+from airflow.providers.common.sql.operators.sql import SQLExecuteQueryOperator
 import pendulum
 
 
@@ -23,7 +25,7 @@ def get_data(**kwargs):
         "ncr_ride_bookings.csv"
     )
     print("Fetching data from API and storing in PostgreSQL")
-    df.to_csv(file_path, index=False)
+    df.to_csv(file_path, index=False) # Example of Data Lake Operation (GCS, S3, ADLS, etc.)
 
     return file_path
 
@@ -38,3 +40,52 @@ def check_data(ti, **kwargs):
         return "file_path is empty!"
 
 
+create_stg_schema = SQLExecuteQueryOperator(
+        task_id="create_schema_stg",
+        conn_id="postgressql_conn",
+        sql="""
+            CREATE SCHEMA IF NOT EXISTS STG; 
+            """,
+    )
+create_sor_schema = SQLExecuteQueryOperator(
+        task_id="create_schema_sor",
+        conn_id="postgressql_conn",
+        sql="""
+            CREATE SCHEMA IF NOT EXISTS SOR;
+            """,
+    )
+
+create_stg_uber_data = SQLExecuteQueryOperator(
+        task_id="create_stg_table_uber_data",
+        conn_id="postgressql_conn",
+        sql="""
+            CREATE TABLE IF NOT EXISTS STG.uber_data (
+                Request_id VARCHAR(50),
+                Pickup_point VARCHAR(10),
+                Driver_id VARCHAR(50),
+                Status VARCHAR(10),
+                Request_time TIMESTAMP,
+                Drop_time TIMESTAMP,
+                Fare FLOAT,
+                Distance FLOAT,
+                Rider_id VARCHAR(50)
+            );
+            """,
+    )
+create_sor_uber_data = SQLExecuteQueryOperator(
+        task_id="create_sor_table_uber_data",
+        conn_id="postgressql_conn",
+        sql="""
+            CREATE TABLE IF NOT EXISTS SOR.uber_data (
+                Request_id VARCHAR(50),
+                Pickup_point VARCHAR(10),
+                Driver_id VARCHAR(50),
+                Status VARCHAR(10),
+                Request_time TIMESTAMP,
+                Drop_time TIMESTAMP,
+                Fare FLOAT,
+                Distance FLOAT,
+                Rider_id VARCHAR(50)
+            );
+            """,
+)

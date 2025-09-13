@@ -11,7 +11,7 @@ First download the docker-compose file by running this command in the terminal.
 
 
 1. docker compose up airflow-init
-2. docker-compose up -d" 
+2. docker-compose up -d
 3. docker ps -- to check status
 
 
