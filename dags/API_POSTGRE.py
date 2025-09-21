@@ -1,12 +1,12 @@
 import datetime
 from airflow.sdk import DAG,task
 from airflow.providers.standard.operators.python import PythonOperator
-rom airflow.providers.postgres.hooks.postgres import PostgresHook
+from airflow.providers.postgres.hooks.postgres import PostgresHook
 from airflow.providers.common.sql.operators.sql import SQLExecuteQueryOperator
 import pendulum
 
 
-DAG = DAG(
+dag = DAG(
     dag_id="API_POSTGRE",
     start_date=pendulum.datetime(2023, 1, 1, tz="UTC"),
     schedule=None,
@@ -31,13 +31,13 @@ def get_data(**kwargs):
 
 def check_data(ti, **kwargs):
     import pandas as pd
-    file_path = ti.xcom_pull(task_ids="get_data")
 
-    if file_path and file_path.strip():
-        print("Number of columns in data:", df.shape[1])
-        return 'file_path is not empty:', file_path
-    else:
-        return "file_path is empty!"
+    file_path = ti.xcom_pull(task_ids="get_data")
+    if not file_path or not file_path.strip():
+        raise ValueError("File Path is empty!")
+    df = pd.read_csv(file_path)
+    print("Number of columns in data:", df.shape[1])
+    return file_path
 
 
 create_stg_schema = SQLExecuteQueryOperator(
@@ -75,27 +75,56 @@ def create_stg_table_from_csv(ti, **kwargs):
     hook.run(create_table_sql)
     print("STG.uber_data table created with columns:", columns)
 
-create_stg_uber_data_dynamic = PythonOperator(
-    task_id="create_stg_table_uber_data_dynamic",
+
+create_stg_uber_data = PythonOperator(
+    task_id="create_stg_table_uber_data",
     python_callable=create_stg_table_from_csv,
-    dag=DAG,
+    dag=dag,
     provide_context=True,
 )
+
+def load_csv_to_stg(**kwargs):
+    from airflow.providers.postgres.hooks.postgres import PostgresHook
+    ti = kwargs['ti']
+    file_path = ti.xcom_pull(task_ids="get_data")
+
+    hook = PostgresHook(postgres_conn_id="postgressql_conn")
+    sql = f"""
+        COPY STG.uber_data
+        FROM STDIN
+        WITH CSV HEADER
+    """
+    with open(file_path, "r", encoding="utf-8") as f:
+        hook.copy_expert(sql, f)
+
+    print("Data CSV berhasil dimuat ke STG.uber_data")
 
 create_sor_uber_data = SQLExecuteQueryOperator(
         task_id="create_sor_table_uber_data",
         conn_id="postgressql_conn",
         sql="""
-            CREATE TABLE IF NOT EXISTS SOR.uber_data (
-                Request_id VARCHAR(50),
-                Pickup_point VARCHAR(10),
-                Driver_id VARCHAR(50),
-                Status VARCHAR(10),
-                Request_time TIMESTAMP,
-                Drop_time TIMESTAMP,
-                Fare FLOAT,
-                Distance FLOAT,
-                Rider_id VARCHAR(50)
+            CREATE TABLE IF NOT EXISTS SOR.uber_ride (
+            booking_date DATE,
+            booking_time TIME,
+            booking_id VARCHAR(50) UNIQUE,
+            booking_status VARCHAR(20),
+            customer_id VARCHAR(50) UNIQUE,
+            vehicle_type VARCHAR(30),
+            pickup_location VARCHAR(100),
+            drop_location VARCHAR(100),
+            avg_vtat DECIMAL,
+            avg_ctat DECIMAL,
+            cancelled_rides_by_customer INTEGER,
+            reason_for_cancelling_by_customer VARCHAR(255),
+            cancelled_rides_by_driver INTEGER,
+            driver_cancellation_reason VARCHAR(255),
+            incomplete_rides INTEGER,
+            incomplete_rides_reason VARCHAR(255),
+            booking_value DECIMAL,
+            ride_distance DECIMAL,
+            driver_ratings DECIMAL,
+            customer_rating DECIMAL,
+            payment_method VARCHAR(30)
             );
             """,
 )
@@ -103,18 +132,36 @@ create_sor_uber_data = SQLExecuteQueryOperator(
 get_data = PythonOperator(
     task_id="get_data",
     python_callable=get_data,
-    dag=DAG,
+    dag=dag,
     provide_context=True,
 )
 
 check_data = PythonOperator(
     task_id="check_data",
     python_callable=check_data,
-    dag=DAG,
+    dag=dag,
     provide_context=True,
 )
 
-get_data >> check_data >> create_stg_schema >> create_sor_schema >> create_stg_uber_data >> create_sor_uber_data
+load_csv_to_stg = PythonOperator(
+    task_id="load_csv_to_stg",
+    python_callable=load_csv_to_stg,
+    dag=dag,
+    provide_context=True,
+)
+
+load_stg_to_sor = SQLExecuteQueryOperator(
+        task_id="load_stg_to_sor",
+        conn_id="postgressql_conn",
+        sql="""
+
+        """,
+)
+
+# This is an example of incremental load (using INSERT ... ON CONFLICT)
+# If you want to do a full load, you can use TRUNCATE + INSERT (refresh)
+
+get_data >> check_data >> create_stg_schema >> create_sor_schema >> create_stg_uber_data >> load_csv_to_stg >> create_sor_uber_data >> load_stg_to_sor  
 
 
 
