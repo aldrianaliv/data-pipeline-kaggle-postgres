@@ -94,8 +94,6 @@ services:
       POSTGRES_DB: airflow
     volumes:
       - postgres-db-volume:/var/lib/postgresql/data
-    ports:
-      - "5432:5432"
     healthcheck:
       test: ["CMD", "pg_isready", "-U", "airflow"]
       interval: 10s
@@ -103,6 +101,16 @@ services:
       start_period: 5s
     restart: always
 
+  postgres_data:
+    image: postgres:13
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: postgres
+    ports:
+      - "5433:5432"   # beda port biar gak tabrakan dengan metadata
+    volumes:
+      - pg_data:/var/lib/postgresql/data
   redis:
     # Redis is limited to 7.2-bookworm due to licencing change
     # https://redis.io/blog/redis-adopts-dual-source-available-licensing/
@@ -335,3 +343,4 @@ services:
 
 volumes:
   postgres-db-volume:
+  pg_data:

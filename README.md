@@ -13,6 +13,10 @@ Docker, Docker Compose, Python, DBeaver/PgAdmin/Adminer and Code Editor.
 4. docker ps  (to check status of images)
 5. Create an .env file and insert `AIRFLOW_UID=50000` 
 
+# To Access the Airflow UI
+
+Go to your web browser and open up localhost:8080.
+
 
 # Pipeline Architecture 
 

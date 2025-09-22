@@ -161,7 +161,7 @@ load_stg_to_sor = SQLExecuteQueryOperator(
 # This is an example of incremental load (using INSERT ... ON CONFLICT)
 # If you want to do a full load, you can use TRUNCATE + INSERT (refresh)
 
-get_data >> check_data >> create_stg_schema >> create_sor_schema >> create_stg_uber_data >> load_csv_to_stg >> create_sor_uber_data >> load_stg_to_sor  
+get_data >> check_data >> create_stg_schema >> create_sor_schema >> create_stg_uber_data # >> load_csv_to_stg >> create_sor_uber_data >> load_stg_to_sor  
 
 
 
