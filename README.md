@@ -14,3 +14,12 @@ Docker, Docker Compose, Python, DBeaver/PgAdmin/Adminer and Code Editor.
 5. Create an .env file and insert `AIRFLOW_UID=50000` 
 
 
+# Pipeline Architecture 
+
+![image](images\Pipeline-Kaggle-Postgre.drawio.png)
+
+Using Docker as the baseline of the architecture to run Airflow. \
+Streams data from Kaggle using Kaggle Hub (Uber Ride Data) to Postgres Database. \
+Implemented database schemas (STG and SOR) to handles and prepare different stages of data. \
+
+
