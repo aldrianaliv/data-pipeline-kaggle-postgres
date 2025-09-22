@@ -1,0 +1,12 @@
+{"timestamp":"2025-09-22T16:42:53.163761","level":"info","event":"DAG bundles loaded: dags-folder, example_dags","logger":"airflow.dag_processing.bundles.manager.DagBundlesManager"}
+{"timestamp":"2025-09-22T16:42:53.177355","level":"info","event":"Filling up the DagBag from /opt/airflow/dags/API_POSTGRE.py","logger":"airflow.models.dagbag.DagBag"}
+{"timestamp":"2025-09-22T16:42:54.906514Z","level":"info","event":"Task instance is in running state","chan":"stdout","logger":"task"}
+{"timestamp":"2025-09-22T16:42:54.912423Z","level":"info","event":" Previous state of the Task instance: TaskInstanceState.QUEUED","chan":"stdout","logger":"task"}
+{"timestamp":"2025-09-22T16:42:54.916870Z","level":"info","event":"Current task name:get_data","chan":"stdout","logger":"task"}
+{"timestamp":"2025-09-22T16:42:54.918755Z","level":"info","event":"Dag name:API_POSTGRE","chan":"stdout","logger":"task"}
+{"timestamp":"2025-09-22T16:43:06.169737Z","level":"info","event":"Fetching data from API and storing in PostgreSQL","chan":"stdout","logger":"task"}
+{"timestamp":"2025-09-22T16:43:32.980807","level":"info","event":"Done. Returned value was: dags/data/uber-data.csv","logger":"airflow.task.operators.airflow.providers.standard.operators.python.PythonOperator"}
+{"timestamp":"2025-09-22T16:43:33.088810","level":"info","event":"Pushing xcom","ti":"RuntimeTaskInstance(id=UUID('0199724e-2d1d-73a9-b8a4-a24713647af7'), task_id='get_data', dag_id='API_POSTGRE', run_id='manual__2025-09-22T16:42:29.859758+00:00', try_number=1, map_index=-1, hostname='65b971fdbed4', context_carrier={}, task=<Task(PythonOperator): get_data>, bundle_instance=LocalDagBundle(name=dags-folder), max_tries=0, start_date=datetime.datetime(2025, 9, 22, 16, 42, 35, 269956, tzinfo=datetime.timezone.utc), end_date=None, state=<TaskInstanceState.RUNNING: 'running'>, is_mapped=False, rendered_map_index=None, log_url='http://localhost:8080/dags/API_POSTGRE/runs/manual__2025-09-22T16%3A42%3A29.859758%2B00%3A00/tasks/get_data?try_number=1')","logger":"task"}
+{"timestamp":"2025-09-22T16:43:35.626202Z","level":"info","event":"Task instance in success state","chan":"stdout","logger":"task"}
+{"timestamp":"2025-09-22T16:43:35.626905Z","level":"info","event":" Previous state of the Task instance: TaskInstanceState.RUNNING","chan":"stdout","logger":"task"}
+{"timestamp":"2025-09-22T16:43:35.629247Z","level":"info","event":"Task operator:<Task(PythonOperator): get_data>","chan":"stdout","logger":"task"}

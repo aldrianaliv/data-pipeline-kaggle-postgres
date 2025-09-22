@@ -17,7 +17,7 @@ def get_data(**kwargs):
     import kagglehub
     from kagglehub import KaggleDatasetAdapter
 
-    file_path = "dags\data\uber-data.csv"
+    file_path = "dags/data/uber-data.csv"
 
     df = kagglehub.dataset_load(
         KaggleDatasetAdapter.PANDAS, 
@@ -58,6 +58,7 @@ create_sor_schema = SQLExecuteQueryOperator(
 def create_stg_table_from_csv(ti, **kwargs):
     import pandas as pd
     file_path = ti.xcom_pull(task_ids="get_data")
+    print(file_path)
     if not file_path or not file_path.strip():
         raise ValueError("No file path provided!")
 
@@ -80,22 +81,24 @@ create_stg_uber_data = PythonOperator(
     task_id="create_stg_table_uber_data",
     python_callable=create_stg_table_from_csv,
     dag=dag,
-    provide_context=True,
 )
 
-def load_csv_to_stg(**kwargs):
+def load_csv_to_stg(ti, **kwargs):
     from airflow.providers.postgres.hooks.postgres import PostgresHook
-    ti = kwargs['ti']
+    
     file_path = ti.xcom_pull(task_ids="get_data")
+    print(file_path)
 
+    if not file_path or not file_path.strip():
+        raise ValueError("No file path provided!")
+    
     hook = PostgresHook(postgres_conn_id="postgressql_conn")
     sql = f"""
         COPY STG.uber_data
         FROM STDIN
         WITH CSV HEADER
     """
-    with open(file_path, "r", encoding="utf-8") as f:
-        hook.copy_expert(sql, f)
+    hook.copy_expert(sql=sql, filename=file_path)
 
     print("Data CSV berhasil dimuat ke STG.uber_data")
 
@@ -114,11 +117,11 @@ create_sor_uber_data = SQLExecuteQueryOperator(
             drop_location VARCHAR(100),
             avg_vtat DECIMAL,
             avg_ctat DECIMAL,
-            cancelled_rides_by_customer INTEGER,
+            cancelled_rides_by_customer DECIMAL,
             reason_for_cancelling_by_customer VARCHAR(255),
-            cancelled_rides_by_driver INTEGER,
+            cancelled_rides_by_driver DECIMAL,
             driver_cancellation_reason VARCHAR(255),
-            incomplete_rides INTEGER,
+            incomplete_rides DECIMAL,
             incomplete_rides_reason VARCHAR(255),
             booking_value DECIMAL,
             ride_distance DECIMAL,
@@ -133,35 +136,99 @@ get_data = PythonOperator(
     task_id="get_data",
     python_callable=get_data,
     dag=dag,
-    provide_context=True,
 )
 
 check_data = PythonOperator(
     task_id="check_data",
     python_callable=check_data,
     dag=dag,
-    provide_context=True,
 )
 
 load_csv_to_stg = PythonOperator(
     task_id="load_csv_to_stg",
     python_callable=load_csv_to_stg,
     dag=dag,
-    provide_context=True,
 )
 
 load_stg_to_sor = SQLExecuteQueryOperator(
         task_id="load_stg_to_sor",
         conn_id="postgressql_conn",
         sql="""
-
+        INSERT INTO sor.uber_ride (
+            booking_date,
+            booking_time,
+            booking_id,
+            booking_status,
+            customer_id,
+            vehicle_type,
+            pickup_location,
+            drop_location,
+            avg_vtat,
+            avg_ctat,
+            cancelled_rides_by_customer,
+            reason_for_cancelling_by_customer,
+            cancelled_rides_by_driver,
+            driver_cancellation_reason,
+            incomplete_rides,
+            incomplete_rides_reason,
+            booking_value,
+            ride_distance,
+            driver_ratings,
+            customer_rating,
+            payment_method
+    )
+        SELECT
+            TO_DATE("Date", 'YYYY-MM-DD') AS booking_date,
+            TO_TIMESTAMP("Time", 'HH24:MI:SS')::TIME AS booking_time,
+            "Booking ID" AS booking_id,
+            "Booking Status" AS booking_status,
+            "Customer ID" AS customer_id,
+            "Vehicle Type" AS vehicle_type,
+            "Pickup Location" AS pickup_location,
+            "Drop Location" AS drop_location,
+            NULLIF("Avg VTAT", '')::DECIMAL AS avg_vtat,
+            NULLIF("Avg CTAT", '')::DECIMAL AS avg_ctat,
+            NULLIF("Cancelled Rides by Customer", '')::DECIMAL AS cancelled_rides_by_customer,
+            "Reason for cancelling by Customer" AS reason_for_cancelling_by_customer,
+            NULLIF("Cancelled Rides by Driver", '')::DECIMAL AS cancelled_rides_by_driver,
+            "Driver Cancellation Reason" AS driver_cancellation_reason,
+            NULLIF("Incomplete Rides", '')::DECIMAL AS incomplete_rides,
+            "Incomplete Rides Reason" AS incomplete_rides_reason,
+            NULLIF("Booking Value", '')::DECIMAL AS booking_value,
+            NULLIF("Ride Distance", '')::DECIMAL AS ride_distance,
+            NULLIF("Driver Ratings", '')::DECIMAL AS driver_ratings,
+            NULLIF("Customer Rating", '')::DECIMAL AS customer_rating,
+            "Payment Method" AS payment_method
+        FROM stg.uber_data
+        ON CONFLICT (booking_id) 
+        DO UPDATE SET
+            booking_date = EXCLUDED.booking_date,
+            booking_time = EXCLUDED.booking_time,
+            booking_status = EXCLUDED.booking_status,
+            customer_id = EXCLUDED.customer_id,
+            vehicle_type = EXCLUDED.vehicle_type,
+            pickup_location = EXCLUDED.pickup_location,
+            drop_location = EXCLUDED.drop_location,
+            avg_vtat = EXCLUDED.avg_vtat,
+            avg_ctat = EXCLUDED.avg_ctat,
+            cancelled_rides_by_customer = EXCLUDED.cancelled_rides_by_customer,
+            reason_for_cancelling_by_customer = EXCLUDED.reason_for_cancelling_by_customer,
+            cancelled_rides_by_driver = EXCLUDED.cancelled_rides_by_driver,
+            driver_cancellation_reason = EXCLUDED.driver_cancellation_reason,
+            incomplete_rides = EXCLUDED.incomplete_rides,
+            incomplete_rides_reason = EXCLUDED.incomplete_rides_reason,
+            booking_value = EXCLUDED.booking_value,
+            ride_distance = EXCLUDED.ride_distance,
+            driver_ratings = EXCLUDED.driver_ratings,
+            customer_rating = EXCLUDED.customer_rating,
+            payment_method = EXCLUDED.payment_method;
         """,
 )
 
 # This is an example of incremental load (using INSERT ... ON CONFLICT)
 # If you want to do a full load, you can use TRUNCATE + INSERT (refresh)
 
-get_data >> check_data >> create_stg_schema >> create_sor_schema >> create_stg_uber_data # >> load_csv_to_stg >> create_sor_uber_data >> load_stg_to_sor  
+get_data >> check_data >> create_stg_schema >> create_sor_schema >> create_stg_uber_data >> load_csv_to_stg >> create_sor_uber_data >> load_stg_to_sor  
 
 
 
