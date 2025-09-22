@@ -20,7 +20,7 @@ Go to your web browser and open up localhost:8080.
 
 # Pipeline Architecture 
 
-![image](images\Pipeline-Kaggle-Postgre.drawio.png)
+![Pipeline Diagram](images/Pipeline-Kaggle-Postgre.drawio.png)
 
 Using Docker as the baseline of the architecture to run Airflow. \
 Streams data from Kaggle using Kaggle Hub (Uber Ride Data) to Postgres Database. \
