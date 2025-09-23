@@ -28,7 +28,9 @@ Implemented database schemas (STG and SOR) to handles and prepare different stag
 
 
 # Result DAG 
-![DAG](image/API_POSTGRE-graph.png)
-![Pipeline DAG](image/API_POSTGRE-graph.png)
+
+![DAG](images/GRAPH.png)
+
+get_data >> check_data >> create_schema_stg >> create_schema_sor >> create_stg_table >> load_csv_to_stg >> create_sor_table >> load_stg_to_sor
 
 

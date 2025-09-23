@@ -58,3 +58,9 @@
 {"timestamp":"2025-09-23T07:30:50.106375","level":"info","event":"Filling up the DagBag from /opt/airflow/dags/API_POSTGRE.py","logger":"airflow.models.dagbag.DagBag"}
 {"timestamp":"2025-09-23T07:31:33.870119","level":"info","event":"Filling up the DagBag from /opt/airflow/dags/API_POSTGRE.py","logger":"airflow.models.dagbag.DagBag"}
 {"timestamp":"2025-09-23T07:32:17.224785","level":"info","event":"Filling up the DagBag from /opt/airflow/dags/API_POSTGRE.py","logger":"airflow.models.dagbag.DagBag"}
+{"timestamp":"2025-09-23T07:33:05.555312","level":"info","event":"Filling up the DagBag from /opt/airflow/dags/API_POSTGRE.py","logger":"airflow.models.dagbag.DagBag"}
+{"timestamp":"2025-09-23T07:33:37.522210","level":"info","event":"Filling up the DagBag from /opt/airflow/dags/API_POSTGRE.py","logger":"airflow.models.dagbag.DagBag"}
+{"timestamp":"2025-09-23T07:35:12.495347","level":"info","event":"Filling up the DagBag from /opt/airflow/dags/API_POSTGRE.py","logger":"airflow.models.dagbag.DagBag"}
+{"timestamp":"2025-09-23T07:35:43.710500","level":"info","event":"Filling up the DagBag from /opt/airflow/dags/API_POSTGRE.py","logger":"airflow.models.dagbag.DagBag"}
+{"timestamp":"2025-09-23T07:36:14.847803","level":"info","event":"Filling up the DagBag from /opt/airflow/dags/API_POSTGRE.py","logger":"airflow.models.dagbag.DagBag"}
+{"timestamp":"2025-09-23T07:37:24.180232","level":"info","event":"Filling up the DagBag from /opt/airflow/dags/API_POSTGRE.py","logger":"airflow.models.dagbag.DagBag"}
