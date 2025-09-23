@@ -110,9 +110,9 @@ create_sor_uber_data = SQLExecuteQueryOperator(
             booking_date DATE,
             booking_time TIME,
             booking_id VARCHAR(50) UNIQUE,
-            booking_status VARCHAR(20),
-            customer_id VARCHAR(50) UNIQUE,
-            vehicle_type VARCHAR(30),
+            booking_status VARCHAR(50),
+            customer_id VARCHAR(50),
+            vehicle_type VARCHAR(50),
             pickup_location VARCHAR(100),
             drop_location VARCHAR(100),
             avg_vtat DECIMAL,
@@ -127,7 +127,7 @@ create_sor_uber_data = SQLExecuteQueryOperator(
             ride_distance DECIMAL,
             driver_ratings DECIMAL,
             customer_rating DECIMAL,
-            payment_method VARCHAR(30)
+            payment_method VARCHAR(50)
             );
             """,
 )
@@ -177,7 +177,9 @@ load_stg_to_sor = SQLExecuteQueryOperator(
             customer_rating,
             payment_method
     )
-        SELECT
+        SELECT *
+        FROM (
+            SELECT DISTINCT ON ("Booking ID")
             TO_DATE("Date", 'YYYY-MM-DD') AS booking_date,
             TO_TIMESTAMP("Time", 'HH24:MI:SS')::TIME AS booking_time,
             "Booking ID" AS booking_id,
@@ -200,6 +202,8 @@ load_stg_to_sor = SQLExecuteQueryOperator(
             NULLIF("Customer Rating", '')::DECIMAL AS customer_rating,
             "Payment Method" AS payment_method
         FROM stg.uber_data
+        ORDER BY "Booking ID", "Date" DESC
+        ) AS deduped
         ON CONFLICT (booking_id) 
         DO UPDATE SET
             booking_date = EXCLUDED.booking_date,

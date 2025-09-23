@@ -24,6 +24,11 @@ Go to your web browser and open up localhost:8080.
 
 Using Docker as the baseline of the architecture to run Airflow. \
 Streams data from Kaggle using Kaggle Hub (Uber Ride Data) to Postgres Database. \
-Implemented database schemas (STG and SOR) to handles and prepare different stages of data. \
+Implemented database schemas (STG and SOR) to handles and prepare different stages of data.
+
+
+# Result DAG 
+![DAG](image/API_POSTGRE-graph.png)
+![Pipeline DAG](image/API_POSTGRE-graph.png)
 
 
