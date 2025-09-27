@@ -12,6 +12,11 @@ Docker, Docker Compose, Python, DBeaver/PgAdmin/Adminer and Code Editor.
 3. docker-compose up -d (run docker images)
 4. docker ps  (to check status of images)
 5. Create an .env file and insert `AIRFLOW_UID=50000` 
+6. docker compose run airflow-worker pip install -r /requirements.txt <br>
+
+-- docker exec -it <etl-airflow-worker-1> bash <br>
+-- pip list <br>
+-- docker exec -it <etl-airflow-worker-1> pip install kagglehub <br>
 
 # To Access the Airflow UI
 

@@ -1,0 +1,23 @@
+CREATE TABLE IF NOT EXISTS SOR.uber_ride (
+            booking_date DATE,
+            booking_time TIME,
+            booking_id VARCHAR(50) UNIQUE,
+            booking_status VARCHAR(50),
+            customer_id VARCHAR(50),
+            vehicle_type VARCHAR(50),
+            pickup_location VARCHAR(100),
+            drop_location VARCHAR(100),
+            avg_vtat DECIMAL,
+            avg_ctat DECIMAL,
+            cancelled_rides_by_customer DECIMAL,
+            reason_for_cancelling_by_customer VARCHAR(255),
+            cancelled_rides_by_driver DECIMAL,
+            driver_cancellation_reason VARCHAR(255),
+            incomplete_rides DECIMAL,
+            incomplete_rides_reason VARCHAR(255),
+            booking_value DECIMAL,
+            ride_distance DECIMAL,
+            driver_ratings DECIMAL,
+            customer_rating DECIMAL,
+            payment_method VARCHAR(50)
+            );

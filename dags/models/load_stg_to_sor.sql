@@ -1,0 +1,72 @@
+INSERT INTO sor.uber_ride (
+            booking_date,
+            booking_time,
+            booking_id,
+            booking_status,
+            customer_id,
+            vehicle_type,
+            pickup_location,
+            drop_location,
+            avg_vtat,
+            avg_ctat,
+            cancelled_rides_by_customer,
+            reason_for_cancelling_by_customer,
+            cancelled_rides_by_driver,
+            driver_cancellation_reason,
+            incomplete_rides,
+            incomplete_rides_reason,
+            booking_value,
+            ride_distance,
+            driver_ratings,
+            customer_rating,
+            payment_method
+    )
+        SELECT *
+        FROM (
+            SELECT DISTINCT ON (booking_id)
+            TO_DATE(booking_date, 'YYYY-MM-DD') AS booking_date,
+            TO_TIMESTAMP(booking_time, 'HH24:MI:SS')::TIME AS booking_time,
+            booking_id,
+            booking_status,
+            customer_id,
+            vehicle_type,
+            AS pickup_location,
+            AS drop_location,
+            NULLIF(avg_vtat, '')::DECIMAL AS avg_vtat,
+            NULLIF(avg_ctat, '')::DECIMAL AS avg_ctat,
+            NULLIF(cancelled_rides_by_customer, '')::DECIMAL AS cancelled_rides_by_customer,
+            reason_for_cancelling_by_customer AS reason_for_cancelling_by_customer,
+            NULLIF(cancelled_rides_by_driver, '')::DECIMAL AS cancelled_rides_by_driver,
+            driver_cancellation_reason AS driver_cancellation_reason,
+            NULLIF(incomplete_rides, '')::DECIMAL AS incomplete_rides,
+            incomplete_rides_reason AS incomplete_rides_reason,
+            NULLIF(booking_value, '')::DECIMAL AS booking_value,
+            NULLIF(ride_distance, '')::DECIMAL AS ride_distance,
+            NULLIF(driver_ratings, '')::DECIMAL AS driver_ratings,
+            NULLIF(customer_rating, '')::DECIMAL AS customer_rating,
+            payment_method AS payment_method
+        FROM stg.uber_data
+        ORDER BY booking_id, booking_date DESC
+        ) AS deduped
+        ON CONFLICT (booking_id) 
+        DO UPDATE SET
+            booking_date = EXCLUDED.booking_date,
+            booking_time = EXCLUDED.booking_time,
+            booking_status = EXCLUDED.booking_status,
+            customer_id = EXCLUDED.customer_id,
+            vehicle_type = EXCLUDED.vehicle_type,
+            pickup_location = EXCLUDED.pickup_location,
+            drop_location = EXCLUDED.drop_location,
+            avg_vtat = EXCLUDED.avg_vtat,
+            avg_ctat = EXCLUDED.avg_ctat,
+            cancelled_rides_by_customer = EXCLUDED.cancelled_rides_by_customer,
+            reason_for_cancelling_by_customer = EXCLUDED.reason_for_cancelling_by_customer,
+            cancelled_rides_by_driver = EXCLUDED.cancelled_rides_by_driver,
+            driver_cancellation_reason = EXCLUDED.driver_cancellation_reason,
+            incomplete_rides = EXCLUDED.incomplete_rides,
+            incomplete_rides_reason = EXCLUDED.incomplete_rides_reason,
+            booking_value = EXCLUDED.booking_value,
+            ride_distance = EXCLUDED.ride_distance,
+            driver_ratings = EXCLUDED.driver_ratings,
+            customer_rating = EXCLUDED.customer_rating,
+            payment_method = EXCLUDED.payment_method;

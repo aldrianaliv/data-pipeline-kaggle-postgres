@@ -1,0 +1,3 @@
+kagglehub
+dbt-core
+dbt-postgres

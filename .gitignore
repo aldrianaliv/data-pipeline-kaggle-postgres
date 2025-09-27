@@ -1,3 +1,6 @@
 .env
 .vscode/
 config/.kaggle
+commands.txt
+dags/__pycache__/
+logs/
