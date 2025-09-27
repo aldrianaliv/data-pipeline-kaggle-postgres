@@ -12,8 +12,8 @@ Docker, Docker Compose, Python, DBeaver/PgAdmin/Adminer and Code Editor.
 3. docker-compose up -d (run docker images)
 4. docker ps  (to check status of images)
 5. Create an .env file and insert `AIRFLOW_UID=50000` 
-6. docker compose run airflow-worker pip install -r /requirements.txt <br>
 
+-- docker compose run etl-airflow-worker-1 pip install -r /requirements.txt <br>
 -- docker exec -it <etl-airflow-worker-1> bash <br>
 -- pip list <br>
 -- docker exec -it <etl-airflow-worker-1> pip install kagglehub <br>
@@ -25,7 +25,8 @@ Go to your web browser and open up localhost:8080.
 
 # Pipeline Architecture 
 
-![Pipeline Diagram](images/Pipeline-Kaggle-Postgre.drawio.png)
+![Pipeline Diagram 1](images/Pipeline-Kaggle-Postgre.drawio.png)
+![Pipeline Diagram 2](images/architecture.png)
 
 Using Docker as the baseline of the architecture to run Airflow. \
 Streams data from Kaggle using Kaggle Hub (Uber Ride Data) to Postgres Database. \

@@ -7,7 +7,7 @@ import pendulum
 
 
 dag = DAG(
-    dag_id="API_POSTGRE",
+    dag_id="DAG_Postgres",
     start_date=pendulum.datetime(2023, 1, 1, tz="UTC"),
     schedule=None,
     catchup=False,
@@ -134,10 +134,10 @@ load_stg_to_sor = SQLExecuteQueryOperator(
         sql="models/load_stg_to_sor.sql",
 )
 
+
 # This is an example of incremental load (using INSERT ... ON CONFLICT)
 # If you want to do a full load, you can use TRUNCATE + INSERT (refresh)
 
-get_data >> check_data >> [create_stg_schema, create_sor_schema] >> create_stg_uber_data >> load_csv_to_stg >> create_sor_uber_data >> load_stg_to_sor  
-
+get_data >> check_data >> [create_stg_schema, create_sor_schema] >> create_stg_uber_data >> load_csv_to_stg >> create_sor_uber_data >> load_stg_to_sor
 
 
