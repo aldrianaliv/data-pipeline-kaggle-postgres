@@ -13,15 +13,8 @@ Docker, Docker Compose, Python, DBeaver/PgAdmin/Adminer and Code Editor.
 4. docker ps  (to check status of images)
 5. Create an .env file and insert `AIRFLOW_UID=50000` 
 
--- docker compose run etl-airflow-worker-1 pip install -r /requirements.txt <br>
--- docker exec -it <etl-airflow-worker-1> bash <br>
--- pip list <br>
--- docker exec -it <etl-airflow-worker-1> pip install kagglehub <br>
-
 # To Access the Airflow UI
-
 Go to your web browser and open up localhost:8080.
-
 
 # Pipeline Architecture 
 ## DAG (Kaggle-Postgres)
@@ -37,9 +30,13 @@ Implemented dbt for transforming and quality check data from staging area to sor
 
 
 # Result DAG 
-
+## Postgre Direct
 ![DAG](images/GRAPH.png)
-
 get_data >> check_data >> create_schema_stg >> create_schema_sor >> create_stg_table >> load_csv_to_stg >> create_sor_table >> load_stg_to_sor
+
+## dbt Transform
+![DAG 2](images/dbt-graph.png)
+
+get_data >> check_data >> create_schema_stg >> create_schema_sor >> create_stg_table >> load_csv_to_stg >> dbt_deps >> dbt_run_dim_driver >> dbt_run_dim_customer >> dbt_run_fact_booking >> dbt test
 
 
