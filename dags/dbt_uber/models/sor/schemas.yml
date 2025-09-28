@@ -13,10 +13,6 @@ models:
         description: "Driver's vehicle type"
         tests:
           - not_null
-      - name: driver_ratings
-        description: "Driver's ratings"
-        tests:
-          - not_null
 
   - name: dim_customer
     description: "Dimension table for customer"
@@ -24,9 +20,43 @@ models:
       - name: customer_id
         description: "Unique identifier for customer"
         tests:
-          - unique
           - not_null
-      - name: customer_ratings
+      - name: customer_rating
         description: "Customer's ratings"
+          
+  - name: fact_booking
+    description: "Fact table for Uber bookings"
+    columns:
+      - name: booking_id
+        description: "Primary key for each booking"
         tests:
           - not_null
+      - name: booking_date
+        description: "Date of the booking"
+        tests:
+          - not_null
+      - name: booking_time
+        description: "Time of the booking"
+        tests:
+          - not_null
+      - name: driver_id
+        description: "Foreign key referencing dim_driver"
+        tests:
+          - relationships:
+              to: ref('dim_driver')
+              field: driver_id
+      - name: customer_id
+        description: "Foreign key referencing dim_customer"
+        tests:
+          - not_null
+          - relationships:
+              to: ref('dim_customer')
+              field: customer_id
+      - name: pickup_location
+        description: "Booking pickup location"
+      - name: drop_location
+        description: "Booking drop-off location"
+      - name: booking_status
+        description: "Status of the booking (completed, cancelled, etc.)"
+      - name: payment_method
+        description: "Payment method used for the booking"

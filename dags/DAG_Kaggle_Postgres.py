@@ -129,8 +129,16 @@ dbt_run_fact_uber_ride = BashOperator(
     """
     )
 
+dbt_test = BashOperator(
+    task_id='dbt_test',
+    bash_command="""
+    cd /opt/airflow/dags/dbt_uber \
+    && dbt test
+    """
+    )
+
 get_data >> check_data >> [create_stg_schema, create_sor_schema] >> \
     create_stg_uber_data >> load_csv_to_stg >>\
-    dbt_deps >> dbt_run_dim_customer >> dbt_run_dim_driver >> dbt_run_fact_uber_ride
+    dbt_deps >> dbt_run_dim_customer >> dbt_run_dim_driver >> dbt_run_fact_uber_ride >> dbt_test
 
 
