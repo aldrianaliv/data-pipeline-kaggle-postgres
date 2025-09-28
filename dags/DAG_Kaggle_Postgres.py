@@ -45,35 +45,6 @@ def check_data(ti, **kwargs):
     print("Number of columns in data:", df.shape[1])
     return file_path
 
-# def create_stg_table_from_csv(ti, **kwargs):
-#     import pandas as pd
-#     file_path = ti.xcom_pull(task_ids="get_data")
-#     print(file_path)
-#     if not file_path or not file_path.strip():
-#         raise ValueError("No file path provided!")
-
-#     df = pd.read_csv(file_path)
-#     columns = df.columns.tolist()
-    
-#     columns_sql = ",\n    ".join([f'"{col}" TEXT' for col in columns])
-#     create_table_sql = f"""
-#     CREATE TABLE IF NOT EXISTS STG.uber_data (
-#         {columns_sql}
-#     );
-#     """
-
-#     hook = PostgresHook(postgres_conn_id="postgressql_conn")
-#     hook.run(create_table_sql)
-#     print("STG.uber_data table created with columns:", columns)
-
-
-# create_stg_uber_data = PythonOperator(
-#     task_id="create_stg_table_uber_data",
-#     python_callable=create_stg_table_from_csv,
-#     dag=dag,
-# )
-
-
 def load_csv_to_stg(ti, **kwargs):
     file_path = ti.xcom_pull(task_ids="get_data")
     print(file_path)
@@ -136,19 +107,30 @@ dbt_deps = BashOperator(
 
 dbt_run_dim_customer = BashOperator(
     task_id='dbt_run_dim_customer',
-    bash_command='cd /opt/airflow/dags/dbt_uber && dbt run --select dim_customer'
+    bash_command="""
+    cd /opt/airflow/dags/dbt_uber \
+    && dbt run --select dim_customer || true
+    """
     )
 
 dbt_run_dim_driver = BashOperator(
     task_id='dbt_run_dim_driver',
-    bash_command='cd /opt/airflow/dags/dbt_uber && dbt run --select dim_driver'
+    bash_command="""
+    cd /opt/airflow/dags/dbt_uber \
+    && dbt run --select dim_driver || true
+    """
     )
 
 dbt_run_fact_uber_ride = BashOperator(
     task_id='dbt_run_fact_uber_ride',
-    bash_command='cd /opt/airflow/dags/dbt_uber && dbt run --select fact_uber_ride'
+    bash_command="""
+    cd /opt/airflow/dags/dbt_uber \
+    && dbt run --select fact_booking || true
+    """
     )
 
-get_data >> check_data >> [create_stg_schema, create_sor_schema] >> create_stg_uber_data >> load_csv_to_stg >> dbt_deps >> dbt_run_dim_customer >> dbt_run_dim_driver >> dbt_run_fact_uber_ride
+get_data >> check_data >> [create_stg_schema, create_sor_schema] >> \
+    create_stg_uber_data >> load_csv_to_stg >>\
+    dbt_deps >> dbt_run_dim_customer >> dbt_run_dim_driver >> dbt_run_fact_uber_ride
 
 

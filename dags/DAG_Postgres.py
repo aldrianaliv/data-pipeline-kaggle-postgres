@@ -16,17 +16,21 @@ dag = DAG(
 def get_data(**kwargs):
     import kagglehub
     from kagglehub import KaggleDatasetAdapter
+    import pandas as pd
 
     file_path = "dags/data/uber-data.csv"
 
-    df = kagglehub.dataset_load(
-        KaggleDatasetAdapter.PANDAS, 
-        "yashdevladdha/uber-ride-analytics-dashboard",
-        "ncr_ride_bookings.csv"
-    )
-    print("Fetching data from API and storing in PostgreSQL")
-    df.to_csv(file_path, index=False) # Example of Data Lake Operation (GCS, S3, etc.)
-
+    try:
+        df = kagglehub.dataset_load(
+            KaggleDatasetAdapter.PANDAS, 
+            "yashdevladdha/uber-ride-analytics-dashboard",
+            "ncr_ride_bookings.csv"
+        )
+        print("Fetching data from API and storing in CSV")
+        df.to_csv(file_path, index=False)  # Example of Data Lake Operation (GCS, S3, etc.)
+    except Exception as e:
+        print(f"Failed to fetch from KaggleHub, using local file: {file_path}")
+    
     return file_path
 
 def check_data(ti, **kwargs):

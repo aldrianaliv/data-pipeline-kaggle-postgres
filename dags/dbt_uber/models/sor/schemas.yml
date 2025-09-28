@@ -1,0 +1,32 @@
+version: 2
+
+models:
+  - name: dim_driver
+    description: "Dimension table for drivers"
+    columns:
+      - name: driver_id
+        description: "Unique identifier for driver"
+        tests:
+          - unique
+          - not_null
+      - name: vehicle_type
+        description: "Driver's vehicle type"
+        tests:
+          - not_null
+      - name: driver_ratings
+        description: "Driver's ratings"
+        tests:
+          - not_null
+
+  - name: dim_customer
+    description: "Dimension table for customer"
+    columns:
+      - name: customer_id
+        description: "Unique identifier for customer"
+        tests:
+          - unique
+          - not_null
+      - name: customer_ratings
+        description: "Customer's ratings"
+        tests:
+          - not_null

@@ -35,4 +35,3 @@ LEFT JOIN customer_dim c
 LEFT JOIN driver_dim d
     ON f.driver_ratings::DECIMAL = d.driver_ratings
     AND f.vehicle_type = d.vehicle_type
-    AND f.driver_cancellation_reason = d.driver_cancellation_reason

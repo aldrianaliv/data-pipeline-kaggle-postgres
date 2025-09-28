@@ -24,13 +24,16 @@ Go to your web browser and open up localhost:8080.
 
 
 # Pipeline Architecture 
-
+## DAG (Kaggle-Postgres)
 ![Pipeline Diagram 1](images/Pipeline-Kaggle-Postgre.drawio.png)
-![Pipeline Diagram 2](images/architecture.png)
-
 Using Docker as the baseline of the architecture to run Airflow. \
 Streams data from Kaggle using Kaggle Hub (Uber Ride Data) to Postgres Database. \
 Implemented database schemas (STG and SOR) to handles and prepare different stages of data.
+
+## DAG (Kaggle - Postgres - dbt - Postgres)
+![Pipeline Diagram 2](images/architecture.png)
+
+Implemented dbt for transforming and quality check data from staging area to sor.
 
 
 # Result DAG 
