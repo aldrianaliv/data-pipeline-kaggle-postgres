@@ -28,6 +28,10 @@ Implemented database schemas (STG and SOR) to handles and prepare different stag
 
 Implemented dbt for transforming and quality check data from staging area to sor.
 
+# Database Design
+![database design](images/database-design.png)
+
+Using dbt to transform staged data from the STG schemas to SOR with more structured database.
 
 # Result DAG 
 ## Postgre Direct
